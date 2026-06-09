@@ -1,0 +1,30 @@
+syntax = "proto3";
+package notification;
+option java_package = "com.example.grpc.notification";
+option java_multiple_files = true;
+
+service NotificationService {
+  rpc SendOrderConfirmation  (OrderNotificationRequest)   returns (NotificationResponse);
+  rpc SendPaymentConfirmation(PaymentNotificationRequest) returns (NotificationResponse);
+}
+
+message OrderNotificationRequest {
+  int64  user_id    = 1;
+  string email      = 2;
+  int64  order_id   = 3;
+  double total      = 4;
+}
+
+message PaymentNotificationRequest {
+  int64  user_id    = 1;
+  string email      = 2;
+  int64  order_id   = 3;
+  int64  payment_id = 4;
+  double amount     = 5;
+  string status     = 6;
+}
+
+message NotificationResponse {
+  bool   success = 1;
+  string message = 2;
+}
