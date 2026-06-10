@@ -1,44 +1,58 @@
+server:
+  port: 8080
+
 spring:
   application:
-    name: api-gateway
+    name: API-GATEWAY
   cloud:
     gateway:
-      mvc:
-        routes:
-          - id: auth-service
-            uri: lb://auth-service
-            predicates:
-              - Path=/api/auth/**
+      routes:
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/api/auth/**
 
-          - id: user-service
-            uri: lb://user-service
-            predicates:
-              - Path=/api/users/**
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - AuthFilter
 
-          - id: product-service
-            uri: lb://product-service
-            predicates:
-              - Path=/api/products/**
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/api/products/**
+          filters:
+            - AuthFilter
 
-          - id: order-service
-            uri: lb://order-service
-            predicates:
-              - Path=/api/orders/**
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            - AuthFilter
 
-          - id: payment-service
-            uri: lb://payment-service
-            predicates:
-              - Path=/api/payments/**
+        - id: payment-service
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/api/payments/**
+          filters:
+            - AuthFilter
 
-          - id: notification-service
-            uri: lb://notification-service
-            predicates:
-              - Path=/api/notifications/**
+        - id: notification-service
+          uri: lb://NOTIFICATION-SERVICE
+          predicates:
+            - Path=/api/notifications/**
+          filters:
+            - AuthFilter
 
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
 
-server:
-  port: 8080
+jwt:
+  secret: your-secret-key-here
