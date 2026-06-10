@@ -6,46 +6,50 @@ spring:
     name: API-GATEWAY
   cloud:
     gateway:
-      routes:
-        - id: auth-service
-          uri: lb://AUTH-SERVICE
-          predicates:
-            - Path=/api/auth/**
+      server:
+        webflux:
+          # FIX: prefix mới bắt buộc từ Spring Cloud 2025.0.x
+          trusted-proxies: "10\\.0\\.0\\..*"  # chỉnh lại theo dải IP của bạn
+          routes:
+            - id: auth-service
+              uri: lb://AUTH-SERVICE
+              predicates:
+                - Path=/api/auth/**
 
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/api/users/**
-          filters:
-            - AuthFilter
+            - id: user-service
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/api/users/**
+              filters:
+                - AuthFilter
 
-        - id: product-service
-          uri: lb://PRODUCT-SERVICE
-          predicates:
-            - Path=/api/products/**
-          filters:
-            - AuthFilter
+            - id: product-service
+              uri: lb://PRODUCT-SERVICE
+              predicates:
+                - Path=/api/products/**
+              filters:
+                - AuthFilter
 
-        - id: order-service
-          uri: lb://ORDER-SERVICE
-          predicates:
-            - Path=/api/orders/**
-          filters:
-            - AuthFilter
+            - id: order-service
+              uri: lb://ORDER-SERVICE
+              predicates:
+                - Path=/api/orders/**
+              filters:
+                - AuthFilter
 
-        - id: payment-service
-          uri: lb://PAYMENT-SERVICE
-          predicates:
-            - Path=/api/payments/**
-          filters:
-            - AuthFilter
+            - id: payment-service
+              uri: lb://PAYMENT-SERVICE
+              predicates:
+                - Path=/api/payments/**
+              filters:
+                - AuthFilter
 
-        - id: notification-service
-          uri: lb://NOTIFICATION-SERVICE
-          predicates:
-            - Path=/api/notifications/**
-          filters:
-            - AuthFilter
+            - id: notification-service
+              uri: lb://NOTIFICATION-SERVICE
+              predicates:
+                - Path=/api/notifications/**
+              filters:
+                - AuthFilter
 
 eureka:
   client:
@@ -54,5 +58,7 @@ eureka:
   instance:
     prefer-ip-address: true
 
+# FIX: KHÔNG đặt secret ở đây — dùng biến môi trường
+# Trong production: JWT_SECRET=<chuỗi base64 ngẫu nhiên 64+ ký tự>
 jwt:
-  secret: your-secret-key-here
+  secret: ${JWT_SECRET}
