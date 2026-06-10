@@ -40,7 +40,7 @@
              - Vá CVE-2025-41235, CVE-2025-41253 trong Spring Cloud Gateway
              - Kéo theo Netty mới hơn, fix các CVE DoS trong netty-codec-*
              - Yêu cầu Spring Boot >= 3.5.x (đã nâng ở trên) -->
-        <spring-cloud.version>2025.0.1</spring-cloud.version>
+        <spring-cloud.version>2025.0.2</spring-cloud.version>
 
         <grpc-spring-boot.version>2.15.0.RELEASE</grpc-spring-boot.version>
         <grpc.version>1.62.2</grpc.version>
@@ -51,13 +51,20 @@
         <mapstruct.version>1.5.5.Final</mapstruct.version>
 
         <!-- FIX: phiên bản override cho các thư viện lỗi thời -->
-        <bouncycastle.version>1.80</bouncycastle.version>
+        <!-- FIX CVE-2026-0636 (LDAP Injection): nâng từ 1.81 lên 1.84
+             Ảnh hưởng bcprov-jdk18on >= 1.74 và < 1.84 -->
+        <bouncycastle.version>1.84</bouncycastle.version>
         <guava.version>33.4.8-jre</guava.version>
         <woodstox.version>6.7.0</woodstox.version>
         <xstream.version>1.4.21</xstream.version>
         <commons-configuration2.version>2.11.0</commons-configuration2.version>
         <commons-lang3.version>3.17.0</commons-lang3.version>
         <httpclient.version>4.5.14</httpclient.version>
+
+        <!-- Override legacy commons 1.x — cần thiết vì groupId/artifactId khác
+             với commons-configuration2 và commons-lang3 -->
+        <commons-configuration-legacy.version>1.10</commons-configuration-legacy.version>
+        <commons-lang-legacy.version>2.6</commons-lang-legacy.version>
     </properties>
 
     <dependencyManagement>
@@ -148,8 +155,10 @@
                  SECURITY OVERRIDES — ghi đè các transitive dependency lỗi thời
                  ============================================================ -->
 
-            <!-- FIX CVE-2024-29857, CVE-2024-30172, CVE-2024-34447, v.v.
-                 Nâng bouncycastle từ 1.77 lên 1.80 -->
+            <!-- FIX CVE-2026-0636 (LDAP Injection, CVSS 5.3)
+                 Nâng bouncycastle từ 1.81 lên 1.84
+                 Ảnh hưởng: bcprov-jdk18on >= 1.74 và < 1.84
+                 Chi tiết: lỗi trong LDAPStoreHelper.java -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
@@ -186,19 +195,53 @@
             </dependency>
 
             <!-- FIX CVE-2025-46392
-                 Thay commons-configuration 1.x (EOL) bằng commons-configuration2 -->
+                 Thay commons-configuration 1.x (EOL) bằng commons-configuration2
+                 NOTE: groupId org.apache.commons — KHÁC với legacy bên dưới -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-configuration2</artifactId>
                 <version>${commons-configuration2.version}</version>
             </dependency>
 
+            <!-- FIX CVE-2025-46392 (bổ sung)
+                 Override trực tiếp legacy commons-configuration 1.x (groupId: commons-configuration)
+                 vì groupId/artifactId KHÁC với commons-configuration2 ở trên,
+                 Maven không tự động thay thế — phải khai báo riêng để pin version
+                 và loại bỏ transitive dependencies của nó -->
+            <dependency>
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+                <version>${commons-configuration-legacy.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>*</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
             <!-- FIX CVE-2025-48924
-                 Thay commons-lang 2.x (EOL) bằng commons-lang3 -->
+                 Thay commons-lang 2.x (EOL) bằng commons-lang3
+                 NOTE: groupId org.apache.commons — KHÁC với legacy bên dưới -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
+            </dependency>
+
+            <!-- FIX CVE-2025-48924 (bổ sung)
+                 Override trực tiếp legacy commons-lang 2.x (groupId: commons-lang)
+                 Lý do tương tự commons-configuration ở trên -->
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${commons-lang-legacy.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>*</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- FIX CVE-2020-13956
