@@ -61,4 +61,4 @@ eureka:
 # FIX: KHÔNG đặt secret ở đây — dùng biến môi trường
 # Trong production: JWT_SECRET=<chuỗi base64 ngẫu nhiên 64+ ký tự>
 jwt:
-  secret: ${JWT_SECRET}
+  public-key: classpath:keys/public.pem

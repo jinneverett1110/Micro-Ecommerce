@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "jwt")
 public class JwtConfig {
 
-    private String secret;
+    private String publicKey;
 
-    public String getSecret() { return secret; }
-    public void setSecret(String secret) { this.secret = secret; }
+    public String getPublicKey() { return publicKey; }
+    public void setPublicKey(String publicKey) { this.publicKey = publicKey; }
 }
