@@ -1,53 +1,38 @@
-server:
-  port: 8080
-
 spring:
   application:
-    name: API-GATEWAY
-  config:
-    import: "optional:configserver:"
+    name: api-gateway
   cloud:
     gateway:
-      routes:                          # ← ngang cấp với server, không phải con của webflux
+      routes:
         - id: auth-service
-          uri: lb://AUTH-SERVICE
+          uri: lb://auth-service
           predicates:
             - Path=/api/auth/**
 
         - id: user-service
-          uri: lb://USER-SERVICE
+          uri: lb://user-service
           predicates:
             - Path=/api/users/**
-          filters:
-            - AuthFilter
 
         - id: product-service
-          uri: lb://PRODUCT-SERVICE
+          uri: lb://product-service
           predicates:
             - Path=/api/products/**
-          filters:
-            - AuthFilter
 
         - id: order-service
-          uri: lb://ORDER-SERVICE
+          uri: lb://order-service
           predicates:
             - Path=/api/orders/**
-          filters:
-            - AuthFilter
 
         - id: payment-service
-          uri: lb://PAYMENT-SERVICE
+          uri: lb://payment-service
           predicates:
             - Path=/api/payments/**
-          filters:
-            - AuthFilter
 
         - id: notification-service
-          uri: lb://NOTIFICATION-SERVICE
+          uri: lb://notification-service
           predicates:
             - Path=/api/notifications/**
-          filters:
-            - AuthFilter
 
 eureka:
   client:
@@ -56,5 +41,5 @@ eureka:
   instance:
     prefer-ip-address: true
 
-jwt:
-  public-key: classpath:keys/public.pem
+server:
+  port: 8080
