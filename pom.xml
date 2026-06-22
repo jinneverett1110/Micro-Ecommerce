@@ -27,32 +27,22 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <!-- FIX: nâng từ 3.5.4 lên 3.5.14 để vá CVE-2026-40971 và các CVE tháng 4/2026 -->
-        <version>3.5.14</version>
+        <version>3.4.6</version>
         <relativePath/>
     </parent>
 
     <properties>
-        <java.version>17</java.version>
-
-        <!-- FIX [CRITICAL]: nâng từ 2023.0.1 lên 2025.0.1
-             - Vá CVE-2025-41243 (CVSS 10.0) trong Spring Cloud Gateway
-             - Vá CVE-2025-41235, CVE-2025-41253 trong Spring Cloud Gateway
-             - Kéo theo Netty mới hơn, fix các CVE DoS trong netty-codec-*
-             - Yêu cầu Spring Boot >= 3.5.x (đã nâng ở trên) -->
-        <spring-cloud.version>2025.0.2</spring-cloud.version>
-
-        <grpc-spring-boot.version>2.15.0.RELEASE</grpc-spring-boot.version>
+        <java.version>21</java.version>
+        <spring-cloud.version>2024.0.1</spring-cloud.version>
+        <grpc-spring-boot.version>3.1.0.RELEASE</grpc-spring-boot.version>
         <grpc.version>1.62.2</grpc.version>
         <protobuf.version>3.25.3</protobuf.version>
         <protoc-jar.version>3.11.4</protoc-jar.version>
-        <!-- FIX CVE-2024-31033: nâng từ 0.12.5 lên bản mới nhất -->
-        <jjwt.version>0.13.0</jjwt.version>
+        <jjwt.version>0.12.6</jjwt.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <lombok.version>1.18.32</lombok.version>
 
-        <!-- FIX: phiên bản override cho các thư viện lỗi thời -->
-        <!-- FIX CVE-2026-0636 (LDAP Injection): nâng từ 1.81 lên 1.84
-             Ảnh hưởng bcprov-jdk18on >= 1.74 và < 1.84 -->
+        <!-- Security overrides -->
         <bouncycastle.version>1.84</bouncycastle.version>
         <guava.version>33.4.8-jre</guava.version>
         <woodstox.version>6.7.0</woodstox.version>
@@ -60,9 +50,8 @@
         <commons-configuration2.version>2.11.0</commons-configuration2.version>
         <commons-lang3.version>3.17.0</commons-lang3.version>
         <httpclient.version>4.5.14</httpclient.version>
-
-        <!-- Override legacy commons 1.x — cần thiết vì groupId/artifactId khác
-             với commons-configuration2 và commons-lang3 -->
+        <!-- FIX: giữ nguyên version pin nhưng BỎ exclusions
+             vì eureka-client 2.0.4 runtime-depend trực tiếp vào commons-lang 2.x -->
         <commons-configuration-legacy.version>1.10</commons-configuration-legacy.version>
         <commons-lang-legacy.version>2.6</commons-lang-legacy.version>
     </properties>
@@ -152,13 +141,10 @@
             </dependency>
 
             <!-- ============================================================
-                 SECURITY OVERRIDES — ghi đè các transitive dependency lỗi thời
+                 SECURITY OVERRIDES
                  ============================================================ -->
 
-            <!-- FIX CVE-2026-0636 (LDAP Injection, CVSS 5.3)
-                 Nâng bouncycastle từ 1.81 lên 1.84
-                 Ảnh hưởng: bcprov-jdk18on >= 1.74 và < 1.84
-                 Chi tiết: lỗi trong LDAPStoreHelper.java -->
+            <!-- FIX CVE-2026-0636 (LDAP Injection, CVSS 5.3) -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
@@ -170,82 +156,57 @@
                 <version>${bouncycastle.version}</version>
             </dependency>
 
-            <!-- FIX CVE-2018-10237, CVE-2023-2976, CVE-2020-8908
-                 Nâng guava từ 19.0 lên 33.4.8-jre -->
+            <!-- FIX CVE-2018-10237, CVE-2023-2976, CVE-2020-8908 -->
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
             </dependency>
 
-            <!-- FIX CVE-2022-40152
-                 Nâng woodstox-core từ 6.2.1 lên 6.7.0 -->
+            <!-- FIX CVE-2022-40152 -->
             <dependency>
                 <groupId>com.fasterxml.woodstox</groupId>
                 <artifactId>woodstox-core</artifactId>
                 <version>${woodstox.version}</version>
             </dependency>
 
-            <!-- FIX CVE-2022-41966 (CVSS 8.2), CVE-2024-47072
-                 Nâng xstream từ 1.4.19 lên 1.4.21 -->
+            <!-- FIX CVE-2022-41966, CVE-2024-47072 -->
             <dependency>
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>
                 <version>${xstream.version}</version>
             </dependency>
 
-            <!-- FIX CVE-2025-46392
-                 Thay commons-configuration 1.x (EOL) bằng commons-configuration2
-                 NOTE: groupId org.apache.commons — KHÁC với legacy bên dưới -->
+            <!-- FIX CVE-2025-46392 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-configuration2</artifactId>
                 <version>${commons-configuration2.version}</version>
             </dependency>
 
-            <!-- FIX CVE-2025-46392 (bổ sung)
-                 Override trực tiếp legacy commons-configuration 1.x (groupId: commons-configuration)
-                 vì groupId/artifactId KHÁC với commons-configuration2 ở trên,
-                 Maven không tự động thay thế — phải khai báo riêng để pin version
-                 và loại bỏ transitive dependencies của nó -->
+            <!-- FIX CVE-2025-46392 (legacy) — BỎ exclusions để Eureka hoạt động -->
             <dependency>
                 <groupId>commons-configuration</groupId>
                 <artifactId>commons-configuration</artifactId>
                 <version>${commons-configuration-legacy.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>*</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
-            <!-- FIX CVE-2025-48924
-                 Thay commons-lang 2.x (EOL) bằng commons-lang3
-                 NOTE: groupId org.apache.commons — KHÁC với legacy bên dưới -->
+            <!-- FIX CVE-2025-48924 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
             </dependency>
 
-            <!-- FIX CVE-2025-48924 (bổ sung)
-                 Override trực tiếp legacy commons-lang 2.x (groupId: commons-lang)
-                 Lý do tương tự commons-configuration ở trên -->
+            <!-- FIX CVE-2025-48924 (legacy) — BỎ exclusions vì eureka-client 2.0.4
+                 runtime-depend trực tiếp vào commons-lang 2.x (ExceptionUtils) -->
             <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
                 <version>${commons-lang-legacy.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>*</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
-            <!-- FIX CVE-2020-13956
-                 Nâng httpclient từ 4.5.3 lên 4.5.14 -->
+            <!-- FIX CVE-2020-13956 -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
@@ -325,7 +286,7 @@
                     </executions>
                 </plugin>
 
-                <!-- MapStruct compiler -->
+                <!-- MapStruct + Lombok compiler -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -339,6 +300,7 @@
                             <path>
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
                             </path>
                             <path>
                                 <groupId>org.projectlombok</groupId>
