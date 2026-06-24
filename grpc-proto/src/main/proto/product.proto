@@ -1,0 +1,41 @@
+syntax = "proto3";
+package product;
+option java_package = "com.example.grpc.product";
+option java_multiple_files = true;
+
+service ProductService {
+  rpc GetProduct    (GetProductRequest)    returns (ProductResponse);
+  rpc CheckStock    (CheckStockRequest)    returns (CheckStockResponse);
+  rpc DeductStock   (DeductStockRequest)   returns (DeductStockResponse);
+}
+
+message GetProductRequest {
+  int64 product_id = 1;
+}
+
+message CheckStockRequest {
+  int64 product_id = 1;
+  int32 quantity   = 2;
+}
+
+message DeductStockRequest {
+  int64 product_id = 1;
+  int32 quantity   = 2;
+}
+
+message ProductResponse {
+  int64  id          = 1;
+  string name        = 2;
+  string description = 3;
+  double price       = 4;
+  int32  stock       = 5;
+}
+
+message CheckStockResponse {
+  bool available = 1;
+}
+
+message DeductStockResponse {
+  bool    success       = 1;
+  int32   remaining     = 2;
+}
