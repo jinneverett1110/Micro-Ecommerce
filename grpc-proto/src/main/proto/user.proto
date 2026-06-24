@@ -9,7 +9,7 @@ service UserService {
 }
 
 message GetUserRequest {
-  int64 user_id = 1;
+  string user_id = 1;
 }
 
 message GetUserByEmailRequest {
@@ -17,7 +17,7 @@ message GetUserByEmailRequest {
 }
 
 message UserResponse {
-  int64   id         = 1;
+  string  id         = 1;
   string  email      = 2;
   string  full_name  = 3;
   string  phone      = 4;

@@ -48,3 +48,9 @@ jwt:
   private-key: classpath:keys/private.pem
   access-token-expiration: ${JWT_ACCESS_EXPIRATION}
   refresh-token-expiration: ${JWT_REFRESH_EXPIRATION}
+
+grpc:
+  client:
+    user-service:
+      address: discovery:///user-service
+      negotiation-type: plaintext
