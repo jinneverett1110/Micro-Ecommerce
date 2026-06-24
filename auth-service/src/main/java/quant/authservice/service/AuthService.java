@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import quant.authservice.client.UserServiceGrpcClient;
 import quant.authservice.config.JwtConfig;
 import quant.authservice.dto.request.LoginRequest;
 import quant.authservice.dto.request.RegisterRequest;
@@ -29,6 +30,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final JwtConfig jwtConfig;
+    private final UserServiceGrpcClient userServiceGrpcClient;
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
@@ -50,7 +52,9 @@ public class AuthService {
                 Instant.now().plusSeconds(jwtConfig.getRefreshTokenExpiration() / 1000)
         );
 
-        userRepository.save(user);
+        UserEntity savedUser = userRepository.save(user);
+
+        userServiceGrpcClient.createUserProfile(savedUser.getId(), savedUser.getEmail());
 
         return buildAuthResponse(user, refreshToken);
     }
