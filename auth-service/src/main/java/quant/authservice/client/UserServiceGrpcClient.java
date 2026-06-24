@@ -1,5 +1,6 @@
 package quant.authservice.client;
 
+import com.example.grpc.user.UserServiceGrpc;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Component;
 

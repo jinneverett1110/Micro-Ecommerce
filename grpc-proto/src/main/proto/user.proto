@@ -6,6 +6,7 @@ option java_multiple_files = true;
 service UserService {
   rpc GetUser (GetUserRequest) returns (UserResponse);
   rpc GetUserByEmail (GetUserByEmailRequest) returns (UserResponse);
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse); // thêm
 }
 
 message GetUserRequest {
@@ -16,10 +17,19 @@ message GetUserByEmailRequest {
   string email = 1;
 }
 
+message CreateUserRequest {
+  string user_id = 1;
+  string email   = 2;
+}
+
+message CreateUserResponse {
+  bool success = 1;
+}
+
 message UserResponse {
-  string  id         = 1;
-  string  email      = 2;
-  string  full_name  = 3;
-  string  phone      = 4;
-  string  address    = 5;
+  string id        = 1;
+  string email     = 2;
+  string full_name = 3;
+  string phone     = 4;
+  string address   = 5;
 }
