@@ -35,7 +35,7 @@
         <java.version>21</java.version>
         <spring-cloud.version>2024.0.1</spring-cloud.version>
         <grpc-spring-boot.version>3.1.0.RELEASE</grpc-spring-boot.version>
-        <grpc.version>1.62.2</grpc.version>
+        <grpc.version>1.63.0</grpc.version>
         <protobuf.version>3.25.3</protobuf.version>
         <protoc-jar.version>3.11.4</protoc-jar.version>
         <jjwt.version>0.12.6</jjwt.version>
