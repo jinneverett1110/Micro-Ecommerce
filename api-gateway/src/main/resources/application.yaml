@@ -44,10 +44,15 @@ spring:
           filters:
             - AuthFilter
 
+        - id: notification-ws
+          uri: lb://notification-service
+          predicates:
+            - Path=/ws/**
+
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_URL}
   instance:
     prefer-ip-address: true
 
