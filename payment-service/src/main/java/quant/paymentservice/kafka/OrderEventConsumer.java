@@ -19,5 +19,7 @@ public class OrderEventConsumer {
     public void handleOrderCreated(OrderCreatedEvent event) {
         log.info("Received ORDER_CREATED for orderId: {}", event.getOrderId());
         paymentService.processPayment(event);
+        // QrResponse được trả về nhưng không cần dùng ở đây
+        // Client sẽ poll GET /api/payments/orders/{orderId}/qr để lấy QR
     }
 }
