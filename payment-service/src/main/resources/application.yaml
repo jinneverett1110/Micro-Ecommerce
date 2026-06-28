@@ -35,3 +35,11 @@ eureka:
 
 server:
   port: 8085
+
+sepay:
+  api-key: ${SEPAY_API_KEY}
+  webhook-secret: ${SEPAY_WEBHOOK_SECRET}
+  bank-account: ${SEPAY_BANK_ACCOUNT}
+  bank-name: ${SEPAY_BANK_NAME}
+  account-name: ${SEPAY_ACCOUNT_NAME}
+  qr-url: https://qr.sepay.vn/img
