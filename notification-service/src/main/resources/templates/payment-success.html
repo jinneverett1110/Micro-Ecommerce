@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; }
+        .container { max-width: 600px; margin: 30px auto; background: white; padding: 30px; border-radius: 8px; }
+        .header { background: #4CAF50; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { padding: 20px 0; }
+        .amount { font-size: 24px; font-weight: bold; color: #4CAF50; text-align: center; margin: 20px 0; }
+        .footer { text-align: center; color: #888; font-size: 12px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2>✅ Thanh toán thành công!</h2>
+    </div>
+    <div class="content">
+        <p>Xin chào <strong th:text="${userEmail}"></strong>,</p>
+        <p>Đơn hàng của bạn đã được thanh toán thành công.</p>
+        <p><strong>Mã đơn hàng:</strong> <span th:text="${orderId}"></span></p>
+        <div class="amount" th:text="'₫' + ${totalAmount}"></div>
+        <p>Chúng tôi sẽ xử lý và giao hàng sớm nhất có thể.</p>
+    </div>
+    <div class="footer">
+        <p>Cảm ơn bạn đã mua hàng tại hệ thống của chúng tôi!</p>
+    </div>
+</div>
+</body>
+</html>
