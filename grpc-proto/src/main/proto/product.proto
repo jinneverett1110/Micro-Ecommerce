@@ -1,0 +1,48 @@
+syntax = "proto3";
+package product;
+option java_package = "com.example.grpc.product";
+option java_multiple_files = true;
+
+service ProductService {
+  rpc GetProduct  (GetProductRequest)  returns (ProductResponse);
+  rpc CheckStock  (CheckStockRequest)  returns (CheckStockResponse);
+  rpc DeductStock (DeductStockRequest) returns (DeductStockResponse);
+}
+
+message GetProductRequest {
+  string variant_id = 1;  // UUID
+}
+
+message ProductResponse {
+  string variant_id   = 1;
+  string product_id   = 2;
+  string product_name = 3;
+  string sku          = 4;
+  double price        = 5;
+  int32  stock        = 6;
+  string image_url    = 7;
+}
+
+message CheckStockRequest {
+  string variant_id = 1;
+  int32  quantity   = 2;
+}
+
+message CheckStockResponse {
+  bool   available = 1;
+  int32  stock     = 2;
+}
+
+message DeductStockRequest {
+  repeated DeductStockItem items = 1;  // deduct nhiều variant 1 lần
+}
+
+message DeductStockItem {
+  string variant_id = 1;
+  int32  quantity   = 2;
+}
+
+message DeductStockResponse {
+  bool   success = 1;
+  string message = 2;
+}

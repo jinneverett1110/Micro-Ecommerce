@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### keys ###
+*.pem
+
+*.env
+
+*.yml
